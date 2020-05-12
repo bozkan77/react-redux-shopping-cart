@@ -18,8 +18,9 @@ const Navbar = ({ amount }) => {
   );
 };
 const mapStateToProps = (state) => {
+  const amount = state.cartReducer.amount;
   return {
-    amount: state.amount,
+    amount,
   };
 };
 

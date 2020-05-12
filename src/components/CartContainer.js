@@ -1,9 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 // redux
 import { connect } from 'react-redux';
 import CartItem from './CartItem';
 
-const CartContainer = ({ cart = [] }) => {
+import * as cartAction from '../actions/cartActions';
+import * as actionTypes from '../actions/cartActions';
+
+const CartContainer = ({ cart = [], total, dispatch, getAmount }) => {
+  useEffect(() => {
+    getAmount();
+  }, [getAmount]);
   if (cart.length === 0) {
     return (
       <section className='cart'>
@@ -32,19 +38,31 @@ const CartContainer = ({ cart = [] }) => {
         <hr />
         <div className='cart-total'>
           <h4>
-            toplam <span>0.00 TL</span>
+            toplam <span>{total} TL</span>
           </h4>
         </div>
-        <button className='btn clear-btn'>sepeti sil</button>
+        <button
+          className='btn clear-btn'
+          onClick={() => dispatch(cartAction.clearCart())}
+        >
+          sepeti sil
+        </button>
       </footer>
     </section>
   );
 };
-const mapStateToProps = (store) => {
-  const { cart, total } = store;
+const mapStateToProps = (state) => {
+  const { cart } = state.cartReducer;
+  console.log(cart);
   return {
     cart,
-    total,
   };
 };
-export default connect(mapStateToProps)(CartContainer);
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getAmount: (amount) => dispatch(actionTypes.getTotal(amount)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(CartContainer);
